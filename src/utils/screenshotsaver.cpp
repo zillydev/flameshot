@@ -286,7 +286,6 @@ bool saveToFilesystemGUI(const QPixmap& capture)
         QString className(widget->metaObject()->className());
         if (0 ==
             className.compare(CaptureWidget::staticMetaObject.className())) {
-            widget->showNormal();
             widget->hide();
             break;
         }

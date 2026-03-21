@@ -38,6 +38,9 @@
 #include <QScreen>
 #include <QShortcut>
 #include <QWindow>
+#if defined(Q_OS_MACOS)
+#include "utils/macoswindowutils.h"
+#endif
 
 #if !defined(DISABLE_UPDATE_CHECKER)
 #include "widgets/updatenotificationwidget.h"
@@ -172,7 +175,7 @@ CaptureWidget::CaptureWidget(const CaptureRequest& req,
         }
         QScreen* currentScreen = QGuiAppCurrentScreen().currentScreen();
         move(currentScreen->geometry().x(), currentScreen->geometry().y());
-        resize(currentScreen->size());
+        setFixedSize(currentScreen->size());
 // LINUX
 #else
 // Call cmake with -DFLAMESHOT_DEBUG_CAPTURE=ON to enable easier debugging
@@ -303,17 +306,6 @@ CaptureWidget::CaptureWidget(const CaptureRequest& req,
 
 CaptureWidget::~CaptureWidget()
 {
-#if defined(Q_OS_MACOS)
-    for (QWidget* widget : qApp->topLevelWidgets()) {
-        QString className(widget->metaObject()->className());
-        if (0 ==
-            className.compare(CaptureWidget::staticMetaObject.className())) {
-            widget->showNormal();
-            widget->hide();
-            break;
-        }
-    }
-#endif
     if (m_captureDone) {
         auto lastRegion = m_selection->geometry();
         const qreal scale = m_context.screenshot.devicePixelRatio();
@@ -329,6 +321,9 @@ CaptureWidget::~CaptureWidget()
     } else {
         emit Flameshot::instance()->captureFailed();
     }
+#if defined(Q_OS_MACOS)
+    restorePreviousActiveApp();
+#endif
 }
 
 void CaptureWidget::initButtons()

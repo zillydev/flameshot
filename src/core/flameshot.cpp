@@ -8,6 +8,7 @@
 #endif
 
 #if defined(Q_OS_MACOS)
+#include "utils/macoswindowutils.h"
 #include <QWindow>
 #include <objc/message.h>
 
@@ -170,10 +171,12 @@ CaptureWidget* Flameshot::gui(const CaptureRequest& req)
 #ifdef Q_OS_WIN
         m_captureWindow->show();
 #elif defined(Q_OS_MACOS)
+        savePreviousActiveApp();
         if (ConfigHandler().useNativeFullscreen()) {
             m_captureWindow->showFullScreen();
         } else {
             m_captureWindow->show();
+            setWindowAboveMenuBar(m_captureWindow);
         }
         m_captureWindow->activateWindow();
         m_captureWindow->raise();

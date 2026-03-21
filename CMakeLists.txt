@@ -10,6 +10,11 @@ project(
   flameshot
   VERSION ${FLAMESHOT_VERSION}
   LANGUAGES CXX)
+
+if(APPLE)
+  enable_language(OBJCXX)
+endif()
+
 set(PROJECT_NAME_CAPITALIZED "Flameshot")
 
 include(FetchContent)

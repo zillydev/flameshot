@@ -42,3 +42,12 @@ IF (WIN32)
     PRIVATE winlnkfileparse.cpp
   )
 ENDIF()
+
+if (APPLE)
+    target_sources(
+      flameshot
+      PRIVATE macoswindowutils.h
+              macoswindowutils.mm
+    )
+    target_link_libraries(flameshot "-framework AppKit")
+endif()

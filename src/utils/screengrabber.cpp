@@ -321,7 +321,7 @@ QPixmap ScreenGrabber::grabEntireDesktop(bool& ok, int preSelectedMonitor)
     }
     const QRect geom = currentScreen->geometry();
     screenshot = currentScreen->grabWindow(
-      wid, geom.x(), geom.y(), geom.width(), geom.height());
+      wid, 0, 0, geom.width(), geom.height());
     screenshot.setDevicePixelRatio(currentScreen->devicePixelRatio());
     return screenshot;
 
@@ -405,7 +405,7 @@ QPixmap ScreenGrabber::grabScreen(QScreen* screen, bool& ok)
 #else
     ok = true;
     return screen->grabWindow(
-      0, geometry.x(), geometry.y(), geometry.width(), geometry.height());
+      0, 0, 0, geometry.width(), geometry.height());
 #endif
     return p;
 }
