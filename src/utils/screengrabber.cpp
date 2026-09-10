@@ -319,9 +319,9 @@ QPixmap ScreenGrabber::grabEntireDesktop(bool& ok, int preSelectedMonitor)
         ok = false;
         return QPixmap();
     }
-    const QRect geom = currentScreen->geometry();
-    screenshot = currentScreen->grabWindow(
-      wid, 0, 0, geom.width(), geom.height());
+    // Grab with no rect: explicit x/y are global desktop coordinates here, so
+    // a hardcoded origin would always return the primary screen.
+    screenshot = currentScreen->grabWindow(wid);
     screenshot.setDevicePixelRatio(currentScreen->devicePixelRatio());
     return screenshot;
 
@@ -396,7 +396,6 @@ QRect ScreenGrabber::screenGeometry(QScreen* screen)
 QPixmap ScreenGrabber::grabScreen(QScreen* screen, bool& ok)
 {
     QPixmap p;
-    QRect geometry = screenGeometry(screen);
 #if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
     const QList<QScreen*> screens = QGuiApplication::screens();
     int screenIndex = screens.indexOf(screen);
@@ -404,8 +403,9 @@ QPixmap ScreenGrabber::grabScreen(QScreen* screen, bool& ok)
     p = grabEntireDesktop(ok, screenIndex);
 #else
     ok = true;
-    return screen->grabWindow(
-      0, 0, 0, geometry.width(), geometry.height());
+    // No rect: x/y are global on macOS but screen-local on Windows, so only
+    // an empty rect means "this screen" on both.
+    return screen->grabWindow(0);
 #endif
     return p;
 }

@@ -174,6 +174,12 @@ CaptureWidget::CaptureWidget(const CaptureRequest& req,
                            Qt::Tool);
         }
         QScreen* currentScreen = QGuiAppCurrentScreen().currentScreen();
+        // Bind the window to its screen before positioning it: Qt flips to
+        // Cocoa's bottom-left origin using the screen the window belongs to.
+        create();
+        if (windowHandle()) {
+            windowHandle()->setScreen(currentScreen);
+        }
         move(currentScreen->geometry().x(), currentScreen->geometry().y());
         setFixedSize(currentScreen->size());
 // LINUX
